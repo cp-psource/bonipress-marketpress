@@ -125,7 +125,7 @@ if ( !class_exists('Puc_v4p10_Plugin_Ui', false) ):
 
 				$linkText = apply_filters(
 					$this->updateChecker->getUniqueName('manual_check_link'),
-					__('Auf Updates prüfen', 'bonipress')
+					__('Auf Updates prüfen', 'bonips')
 				);
 				if ( !empty($linkText) ) {
 					/** @noinspection HtmlUnknownTarget */
@@ -210,17 +210,17 @@ if ( !class_exists('Puc_v4p10_Plugin_Ui', false) ):
 				$details = '';
 
 				if ( $status == 'no_update' ) {
-					$message = sprintf(_x('Das %s-Plugin ist laut PSource Server auf dem neuesten Stand.', 'the plugin title', 'bonipress'), $title);
+					$message = sprintf(_x('Das %s-Plugin ist laut PSource Server auf dem neuesten Stand.', 'the plugin title', 'bonips'), $title);
 				} else if ( $status == 'update_available' ) {
-					$message = sprintf(_x('Eine neue Version des %s-Plugins ist auf dem PSource Server verfügbar.', 'the plugin title', 'bonipress'), $title);
+					$message = sprintf(_x('Eine neue Version des %s-Plugins ist auf dem PSource Server verfügbar.', 'the plugin title', 'bonips'), $title);
 				} else if ( $status === 'error' ) {
-					$message = sprintf(_x('Es konnte nicht festgestellt werden, ob Updates für %s verfügbar sind.', 'the plugin title', 'bonipress'), $title);
+					$message = sprintf(_x('Es konnte nicht festgestellt werden, ob Updates für %s verfügbar sind.', 'the plugin title', 'bonips'), $title);
 					$noticeClass = 'error notice-error';
 
 					$details = $this->formatManualCheckErrors(get_site_transient($this->manualCheckErrorTransient));
 					delete_site_transient($this->manualCheckErrorTransient);
 				} else {
-					$message = sprintf(__('Unbekannter Update-Status "%s"', 'bonipress'), htmlentities($status));
+					$message = sprintf(__('Unbekannter Update-Status "%s"', 'bonips'), htmlentities($status));
 					$noticeClass = 'error notice-error';
 				}
 				printf(

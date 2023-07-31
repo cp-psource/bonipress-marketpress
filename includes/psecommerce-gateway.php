@@ -1,25 +1,25 @@
 <?php
-if ( ! defined( 'BONIPRESS_MARKET_VERSION' ) ) exit;
+if ( ! defined( 'BONIPS_MARKET_VERSION' ) ) exit;
 
 /**
  * PSeCommerce Gateway
  * @since 1.0
  * @version 1.2
  */
-if ( ! function_exists( 'bonipress_psecommerce_load_gateway' ) ) :
-	function bonipress_psecommerce_load_gateway() {
+if ( ! function_exists( 'bonips_psecommerce_load_gateway' ) ) :
+	function bonips_psecommerce_load_gateway() {
 
-		if ( ! defined( 'BONIPRESS_SLUG' ) ) return;
+		if ( ! defined( 'BONIPS_SLUG' ) ) return;
 
 		if ( version_compare( MP_VERSION, '1.5', '>=' ) ) {
 
-			require_once BONIPRESS_MARKET_CLASSES_DIR . 'class.boniPRESS-Gateway3.php';
+			require_once BONIPS_MARKET_CLASSES_DIR . 'class.boniPS-Gateway3.php';
 
 		}
 		else {
 
-			require_once BONIPRESS_MARKET_CLASSES_DIR . 'class.boniPRESS-Gateway.php';
-			mp_register_gateway_plugin( 'MP_Gateway_boniPRESS', BONIPRESS_SLUG, BONIPRESS_DEFAULT_LABEL );
+			require_once BONIPS_MARKET_CLASSES_DIR . 'class.boniPS-Gateway.php';
+			mp_register_gateway_plugin( 'MP_Gateway_boniPS', BONIPS_SLUG, BONIPS_DEFAULT_LABEL );
 
 		}
 
@@ -27,18 +27,18 @@ if ( ! function_exists( 'bonipress_psecommerce_load_gateway' ) ) :
 endif;
 
 /**
- * Filter the boniPRESS Log
+ * Filter the boniPS Log
  * Parses the %order_id% and %order_link% template tags.
  * @since 1.0
  * @version 1.2
  */
-if ( ! function_exists( 'bonipress_psecommerce_parse_log' ) ) :
-	function bonipress_psecommerce_parse_log( $content, $log_entry ) {
+if ( ! function_exists( 'bonips_psecommerce_parse_log' ) ) :
+	function bonips_psecommerce_parse_log( $content, $log_entry ) {
 
 		// Prep
 		global $mp;
 
-		$bonipress   = bonipress( $log_entry->ctype );
+		$bonips   = bonips( $log_entry->ctype );
 		$order    = get_post( $log_entry->ref_id );
 		if ( ! isset( $order->post_title ) ) {
 
@@ -55,7 +55,7 @@ if ( ! function_exists( 'bonipress_psecommerce_parse_log' ) ) :
 		$content  = str_replace( '%order_id%', $order_id, $content );
 
 		// Link to order if we can edit plugin or are the user who made the order
-		if ( $user_id == $log_entry->user_id || $bonipress->can_edit_plugin( $user_id ) ) {
+		if ( $user_id == $log_entry->user_id || $bonips->can_edit_plugin( $user_id ) ) {
 			$url        = trailingslashit( mp_store_page_url( 'order_status', false ) . $order_id );
 			$track_link = '<a href="' . $url . '">#' . $order->post_title . '</a>';
 			$content    = str_replace( '%order_link%', $track_link, $content );
@@ -75,8 +75,8 @@ endif;
  * @since 1.0
  * @version 1.0
  */
-if ( ! function_exists( 'bonipress_psecommerce_parse_email' ) ) :
-	function bonipress_psecommerce_parse_email( $email ) {
+if ( ! function_exists( 'bonips_psecommerce_parse_email' ) ) :
+	function bonips_psecommerce_parse_email( $email ) {
 
 		if ( $email['request']['ref'] == 'psecommerce_payment' ) {
 

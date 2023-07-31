@@ -1,16 +1,16 @@
 <?php
 /**
  * Plugin Name: BoniPress für PSeCommerce
- * Plugin URI: http://bonipress.me
+ * Plugin URI: http://bonips.me
  * Description: Lasse Benutzer mit BoniPress-Punkten in Deinem PSeCommerce-Shop bezahlen.
  * Version: 1.3
- * Tags: bonipress, psecommerce, gateway, payment
+ * Tags: bonips, psecommerce, gateway, payment
  * Author: DerN3rd
  * Author URI: https://n3rds.work
- * Author Email: support@bonipress.me
+ * Author Email: support@bonips.me
  * Requires at least: WP 4.0
  * Tested up to: WP 5.6
- * Text Domain: bonipress_market
+ * Text Domain: bonips_market
  * Domain Path: /lang
  * License: GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -26,13 +26,13 @@
 
 require 'psource/psource-plugin-update/psource-plugin-updater.php';
 $MyUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
-	'https://n3rds.work//wp-update-server/?action=get_metadata&slug=bonipress-psecommerce', 
+	'https://n3rds.work//wp-update-server/?action=get_metadata&slug=bonips-psecommerce', 
 	__FILE__, 
-	'bonipress-psecommerce' 
+	'bonips-psecommerce' 
 );
 
-if ( ! class_exists( 'boniPRESS_PSeCommerce_Plugin' ) ) :
-	final class boniPRESS_PSeCommerce_Plugin {
+if ( ! class_exists( 'boniPS_PSeCommerce_Plugin' ) ) :
+	final class boniPS_PSeCommerce_Plugin {
 
 		// Plugin Version
 		public $version             = '1.3';
@@ -102,32 +102,32 @@ if ( ! class_exists( 'boniPRESS_PSeCommerce_Plugin' ) ) :
 		 */
 		public function __construct() {
 
-			$this->slug        = 'bonipress-psecommerce';
+			$this->slug        = 'bonips-psecommerce';
 			$this->plugin      = plugin_basename( __FILE__ );
-			$this->domain      = 'bonipress_market';
-			$this->plugin_name = 'boniPRESS for PSeCommerce';
+			$this->domain      = 'bonips_market';
+			$this->plugin_name = 'boniPS for PSeCommerce';
 
 			$this->define_constants();
 			$this->includes();
 			$this->plugin_updates();
 
-			register_activation_hook( BONIPRESS_PSECOMMERCE, 'bonipress_psecommerce_activate_plugin' );
+			register_activation_hook( BONIPS_PSECOMMERCE, 'bonips_psecommerce_activate_plugin' );
 
-			add_action( 'bonipress_init',                                array( $this, 'load_textdomain' ) );
-			add_action( 'bonipress_all_references',                      array( $this, 'add_badge_support' ) );
+			add_action( 'bonips_init',                                array( $this, 'load_textdomain' ) );
+			add_action( 'bonips_all_references',                      array( $this, 'add_badge_support' ) );
 
 			// Payment gateway
-			add_action( 'mp_load_gateway_plugins',                    'bonipress_psecommerce_load_gateway' );
-			add_action( 'psecommerce/load_plugins/mp_include',        'bonipress_psecommerce_load_gateway' );
+			add_action( 'mp_load_gateway_plugins',                    'bonips_psecommerce_load_gateway' );
+			add_action( 'psecommerce/load_plugins/mp_include',        'bonips_psecommerce_load_gateway' );
 			add_filter( 'mp_gateway_api/get_gateways',                array( $this, 'load_gateway' ) );
 
 			add_filter( 'mp_format_currency',                         array( $this, 'adjust_currency_format' ), 10, 4 );
 
-			add_filter( 'bonipress_parse_log_entry_psecommerce_payment', 'bonipress_psecommerce_parse_log', 90, 2 );
-			add_filter( 'bonipress_email_before_send',                   'bonipress_psecommerce_parse_email', 20 );
+			add_filter( 'bonips_parse_log_entry_psecommerce_payment', 'bonips_psecommerce_parse_log', 90, 2 );
+			add_filter( 'bonips_email_before_send',                   'bonips_psecommerce_parse_email', 20 );
 
 			// Rewards
-			add_action( 'bonipress_load_hooks',                          'bonipress_psecommerce_load_rewards', 79 );
+			add_action( 'bonips_load_hooks',                          'bonips_psecommerce_load_rewards', 79 );
 
 		}
 
@@ -138,16 +138,16 @@ if ( ! class_exists( 'boniPRESS_PSeCommerce_Plugin' ) ) :
 		 */
 		public function define_constants() {
 
-			$this->define( 'BONIPRESS_MARKET_VERSION',    $this->version );
-			$this->define( 'BONIPRESS_MARKET_SLUG',       $this->slug );
+			$this->define( 'BONIPS_MARKET_VERSION',    $this->version );
+			$this->define( 'BONIPS_MARKET_SLUG',       $this->slug );
 
-			$this->define( 'BONIPRESS_SLUG',              'bonipress' );
-			$this->define( 'BONIPRESS_DEFAULT_LABEL',     'BoniPress' );
+			$this->define( 'BONIPS_SLUG',              'bonips' );
+			$this->define( 'BONIPS_DEFAULT_LABEL',     'BoniPress' );
 
-			$this->define( 'BONIPRESS_PSECOMMERCE',        __FILE__ );
-			$this->define( 'BONIPRESS_MARKET_ROOT_DIR',    plugin_dir_path( BONIPRESS_PSECOMMERCE ) );
-			$this->define( 'BONIPRESS_MARKET_CLASSES_DIR', BONIPRESS_MARKET_ROOT_DIR . 'classes/' );
-			$this->define( 'BONIPRESS_MARKET_INC_DIR',     BONIPRESS_MARKET_ROOT_DIR . 'includes/' );
+			$this->define( 'BONIPS_PSECOMMERCE',        __FILE__ );
+			$this->define( 'BONIPS_MARKET_ROOT_DIR',    plugin_dir_path( BONIPS_PSECOMMERCE ) );
+			$this->define( 'BONIPS_MARKET_CLASSES_DIR', BONIPS_MARKET_ROOT_DIR . 'classes/' );
+			$this->define( 'BONIPS_MARKET_INC_DIR',     BONIPS_MARKET_ROOT_DIR . 'includes/' );
 
 		}
 
@@ -158,8 +158,8 @@ if ( ! class_exists( 'boniPRESS_PSeCommerce_Plugin' ) ) :
 		 */
 		public function includes() {
 
-			$this->file( BONIPRESS_MARKET_INC_DIR . 'psecommerce-gateway.php' );
-			$this->file( BONIPRESS_MARKET_INC_DIR . 'psecommerce-rewards.php' );
+			$this->file( BONIPS_MARKET_INC_DIR . 'psecommerce-gateway.php' );
+			$this->file( BONIPS_MARKET_INC_DIR . 'psecommerce-rewards.php' );
 
 		}
 
@@ -170,10 +170,10 @@ if ( ! class_exists( 'boniPRESS_PSeCommerce_Plugin' ) ) :
 		 */
 		public function load_gateway( $list ) {
 
-			if ( ! array_key_exists( BONIPRESS_SLUG, $list ) && version_compare( MP_VERSION, '1.5', '>=' ) ) {
+			if ( ! array_key_exists( BONIPS_SLUG, $list ) && version_compare( MP_VERSION, '1.5', '>=' ) ) {
 
-				$global = ( is_multisite() && bonipress_centralize_log() ) ? true : false;
-				$list[ BONIPRESS_SLUG ] = array( 'MP_Gateway_boniPRESS_New', BONIPRESS_DEFAULT_LABEL, $global, false );
+				$global = ( is_multisite() && bonips_centralize_log() ) ? true : false;
+				$list[ BONIPS_SLUG ] = array( 'MP_Gateway_boniPS_New', BONIPS_DEFAULT_LABEL, $global, false );
 
 			}
 
@@ -188,12 +188,12 @@ if ( ! class_exists( 'boniPRESS_PSeCommerce_Plugin' ) ) :
 		 */
 		public function adjust_currency_format( $formatted, $currency, $symbol, $amount ) {
 
-			if ( $currency == 'POINTS' || ( function_exists( 'bonipress_point_type_exists' ) && bonipress_point_type_exists( $currency ) ) ) {
+			if ( $currency == 'POINTS' || ( function_exists( 'bonips_point_type_exists' ) && bonips_point_type_exists( $currency ) ) ) {
 
-				$point_type = mp_get_setting( "gateways->" . BONIPRESS_SLUG . "->{type}", BONIPRESS_DEFAULT_TYPE_KEY );
-				$bonipress     = bonipress( $point_type );
+				$point_type = mp_get_setting( "gateways->" . BONIPS_SLUG . "->{type}", BONIPS_DEFAULT_TYPE_KEY );
+				$bonips     = bonips( $point_type );
 
-				return $bonipress->format_creds( $amount );
+				return $bonips->format_creds( $amount );
 
 			}
 
@@ -238,9 +238,9 @@ if ( ! class_exists( 'boniPRESS_PSeCommerce_Plugin' ) ) :
 
 			if ( ! class_exists( 'PSeCommerce' ) ) return $references;
 
-			$references['psecommerce_payment'] = __( 'Shop Zahlung (PSeCommerce)', 'bonipress_market' );
-			$references['psecommerce_sale']    = __( 'Shop Angebot (PSeCommerce)', 'bonipress_market' );
-			$references['psecommerce_reward']  = __( 'Shop Belohnung (PSeCommerce)', 'bonipress_market' );
+			$references['psecommerce_payment'] = __( 'Shop Zahlung (PSeCommerce)', 'bonips_market' );
+			$references['psecommerce_sale']    = __( 'Shop Angebot (PSeCommerce)', 'bonips_market' );
+			$references['psecommerce_reward']  = __( 'Shop Belohnung (PSeCommerce)', 'bonips_market' );
 
 			return $references;
 
@@ -300,9 +300,9 @@ if ( ! class_exists( 'boniPRESS_PSeCommerce_Plugin' ) ) :
 			$plugin_meta[] = sprintf( '<a href="%s" class="thickbox" aria-label="%s" data-title="%s">%s</a>',
 				esc_url( network_admin_url( 'plugin-install.php?tab=plugin-information&plugin=' . $this->slug .
 				'&TB_iframe=true&width=600&height=550' ) ),
-				esc_attr( __( 'Weitere Informationen zu diesem Plugin', 'bonipress_market' ) ),
+				esc_attr( __( 'Weitere Informationen zu diesem Plugin', 'bonips_market' ) ),
 				esc_attr( $this->plugin_name ),
-				__( 'Details anzeigen', 'bonipress_market' )
+				__( 'Details anzeigen', 'bonips_market' )
 			);
 
 			return $plugin_meta;
@@ -348,17 +348,17 @@ if ( ! class_exists( 'boniPRESS_PSeCommerce_Plugin' ) ) :
 	}
 endif;
 
-function bonipress_for_psecommerce_plugin() {
-	return boniPRESS_PSeCommerce_Plugin::instance();
+function bonips_for_psecommerce_plugin() {
+	return boniPS_PSeCommerce_Plugin::instance();
 }
-bonipress_for_psecommerce_plugin();
+bonips_for_psecommerce_plugin();
 
 /**
  * Plugin Activation
  * @since 1.0
  * @version 1.0
  */
-function bonipress_psecommerce_activate_plugin() {
+function bonips_psecommerce_activate_plugin() {
 
 	global $wpdb;
 
@@ -367,27 +367,27 @@ function bonipress_psecommerce_activate_plugin() {
 	// WordPress check
 	$wp_version = $GLOBALS['wp_version'];
 	if ( version_compare( $wp_version, '4.0', '<' ) )
-		$message[] = __( 'Diese BoniPress Erweiterung erfordert WordPress 4.0 oder höher. Erkannte Version: ', 'bonipress_market' ) . ' ' . $wp_version;
+		$message[] = __( 'Diese BoniPress Erweiterung erfordert WordPress 4.0 oder höher. Erkannte Version: ', 'bonips_market' ) . ' ' . $wp_version;
 
 	// PHP check
 	$php_version = phpversion();
 	if ( version_compare( $php_version, '5.3', '<' ) )
-		$message[] = __( 'Diese BoniPress Erweiterung erfordert PHP 5.3 oder höher. Erkannte Version: ', 'bonipress_market' ) . ' ' . $php_version;
+		$message[] = __( 'Diese BoniPress Erweiterung erfordert PHP 5.3 oder höher. Erkannte Version: ', 'bonips_market' ) . ' ' . $php_version;
 
 	// SQL check
 	$sql_version = $wpdb->db_version();
 	if ( version_compare( $sql_version, '5.0', '<' ) )
-		$message[] = __( 'Diese BoniPress Erweiterung erfordert SQL 5.0 oder höher. Erkannte Version: ', 'bonipress_market' ) . ' ' . $sql_version;
+		$message[] = __( 'Diese BoniPress Erweiterung erfordert SQL 5.0 oder höher. Erkannte Version: ', 'bonips_market' ) . ' ' . $sql_version;
 
-	// boniPRESS Check
-	if ( defined( 'boniPRESS_VERSION' ) && version_compare( boniPRESS_VERSION, '1.7', '<' ) )
-		$message[] = __( 'Diese Erweiterung erfordert BoniPress 1.7 oder höher. Ältere Versionen von BoniPress bieten integrierte Unterstützung für PSeCommerce, wodurch dieses Plugin überflüssig wird.', 'bonipress_market' );
+	// boniPS Check
+	if ( defined( 'boniPS_VERSION' ) && version_compare( boniPS_VERSION, '1.7', '<' ) )
+		$message[] = __( 'Diese Erweiterung erfordert BoniPress 1.7 oder höher. Ältere Versionen von BoniPress bieten integrierte Unterstützung für PSeCommerce, wodurch dieses Plugin überflüssig wird.', 'bonips_market' );
 
 	// Not empty $message means there are issues
 	if ( ! empty( $message ) ) {
 
 		$error_message = implode( "\n", $message );
-		die( __( 'Leider erreicht Deine WordPress-Installation nicht die Mindestanforderungen für die Ausführung dieser Erweiterung. Folgende Fehler wurden angegeben:', 'bonipress_market' ) . "\n" . $error_message );
+		die( __( 'Leider erreicht Deine WordPress-Installation nicht die Mindestanforderungen für die Ausführung dieser Erweiterung. Folgende Fehler wurden angegeben:', 'bonips_market' ) . "\n" . $error_message );
 
 	}
 
