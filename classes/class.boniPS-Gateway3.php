@@ -2,12 +2,14 @@
 if ( ! defined( 'BONIPS_MARKET_VERSION' ) ) exit;
 
 /**
- * PSeCommerce Gateway 1.5x
+ * MarketPress Gateway 1.5x
  * @since 1.1
  * @version 1.0
  */
 if ( ! class_exists( 'MP_Gateway_boniPS_New' ) && class_exists( 'MP_Gateway_API' ) ) :
 	class MP_Gateway_boniPS_New extends MP_Gateway_API {
+
+		public $bonips;
 
 		var $plugin_name           = BONIPS_SLUG;
 		var $admin_name            = BONIPS_DEFAULT_LABEL;
@@ -28,7 +30,7 @@ if ( ! class_exists( 'MP_Gateway_boniPS_New' ) && class_exists( 'MP_Gateway_API'
 
 			$this->admin_name            = BONIPS_DEFAULT_LABEL;
 			$this->public_name           = $this->get_setting( 'name', BONIPS_DEFAULT_LABEL );
-			$this->method_img_url        = $this->get_setting( 'logo', plugins_url( 'assets/images/bonips-token-icon.png', BONIPS_PSECOMMERCE ) );
+			$this->method_img_url        = $this->get_setting( 'logo', plugins_url( 'assets/images/bonips-token-icon.png', BONIPS_MARKETPRESS ) );
 			$this->method_button_img_url = $this->public_name;
 
 			$this->bonips_type           = $this->get_setting( 'type', BONIPS_DEFAULT_TYPE_KEY );
@@ -62,7 +64,7 @@ if ( ! class_exists( 'MP_Gateway_boniPS_New' ) && class_exists( 'MP_Gateway_API'
 			if ( $this->use_exchange() )
 				$cost = $cart_total / $exchange;
 
-			return apply_filters( 'bonips_psecommerce_cart_cost', $cost, $exchange, $this );
+			return apply_filters( 'bonips_marketpress_cart_cost', $cost, $exchange, $this );
 
 		}
 
@@ -107,25 +109,25 @@ if ( ! class_exists( 'MP_Gateway_boniPS_New' ) && class_exists( 'MP_Gateway_API'
 		
 			// Return Cost
 			return '
-<div id="mp-bonips-balance">' . $instructions . '</div>
-<div id="mp-bonips-cost">
-	<table style="width:100%;">
-		<tbody>
-			<tr class="bonips-current-balance">
-				<td class="info">' . __( 'Aktuelles Guthaben', 'bonips_market' ) . '</td>
-				<td class="amount">' . $this->bonips->format_creds( $balance ) . '</td>
-			</tr>
-			<tr class="bonips-total-cost">
-				<td class="info">' . __( 'Gesamtkosten', 'bonips_market' ) . '</td>
-				<td class="amount">' . $this->bonips->format_creds( $total ) . '</td>
-			</tr>
-			<tr class="bonips-balance-after-payment">
-				<td class="info">' . __( 'Guthaben nach dem Kauf', 'bonips_market' ) . '</td>
-				<td class="amount' . ( $warn ? ' text-danger' : '' ) . '"' . ( $warn ? ' style="color: red;"' : '' ) . '>' . $this->bonips->format_creds( $balance - $total ) . '</td>
-			</tr>
-		</tbody>
-	</table>
-</div>';
+			<div id="mp-bonips-balance">' . $instructions . '</div>
+			<div id="mp-bonips-cost">
+				<table style="width:100%;">
+					<tbody>
+						<tr class="bonips-current-balance">
+							<td class="info">' . __( 'Aktuelles Guthaben', 'bonips_market' ) . '</td>
+							<td class="amount">' . $this->bonips->format_creds( $balance ) . '</td>
+						</tr>
+						<tr class="bonips-total-cost">
+							<td class="info">' . __( 'Gesamtkosten', 'bonips_market' ) . '</td>
+							<td class="amount">' . $this->bonips->format_creds( $total ) . '</td>
+						</tr>
+						<tr class="bonips-balance-after-payment">
+							<td class="info">' . __( 'Guthaben nach dem Kauf', 'bonips_market' ) . '</td>
+							<td class="amount' . ( $warn ? ' text-danger' : '' ) . '"' . ( $warn ? ' style="color: red;"' : '' ) . '>' . $this->bonips->format_creds( $balance - $total ) . '</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>';
 
 		}
 
@@ -199,7 +201,7 @@ if ( ! class_exists( 'MP_Gateway_boniPS_New' ) && class_exists( 'MP_Gateway_API'
 
 			// Charge users account
 			$this->bonips->add_creds(
-				'psecommerce_payment',
+				'marketpress_payment',
 				$user_id,
 				0 - $total,
 				$this->get_setting( 'paymentlog', __( 'Zahlung für Bestellung: #%order_id%', 'bonips_market' ) ),
@@ -225,7 +227,7 @@ if ( ! class_exists( 'MP_Gateway_boniPS_New' ) && class_exists( 'MP_Gateway_API'
 		function process_profit_sharing( $cart = NULL, $order_id = 0 ) {
 
 			$payouts      = array();
-			$profit_share = apply_filters( 'bonips_psecommerce_profit_share', $this->get_setting( 'profitshare', 0 ), $cart, $this );
+			$profit_share = apply_filters( 'bonips_marketpress_profit_share', $this->get_setting( 'profitshare', 0 ), $cart, $this );
 
 			// If profit share is enabled
 			if ( $cart !== NULL && $profit_share > 0 ) {
@@ -292,9 +294,9 @@ if ( ! class_exists( 'MP_Gateway_boniPS_New' ) && class_exists( 'MP_Gateway_API'
 						$data = array( 'ref_type' => 'post', 'postid' => $payout['product_id'] );
 
 						// Make sure we only payout once for each order
-						if ( ! $this->bonips->has_entry( 'psecommerce_sale', $order_id, $user_id, $data, $this->bonips_type ) )
+						if ( ! $this->bonips->has_entry( 'marketpress_sale', $order_id, $user_id, $data, $this->bonips_type ) )
 							$this->bonips->add_creds(
-								'psecommerce_sale',
+								'marketpress_sale',
 								$user_id,
 								$payout['payout'],
 								$log_template,
@@ -341,7 +343,7 @@ if ( ! class_exists( 'MP_Gateway_boniPS_New' ) && class_exists( 'MP_Gateway_API'
 		 */
 		public function init_settings_metabox() {
 
-			$metabox = new PSOURCE_Metabox( array(
+			$metabox = new WPMUDEV_Metabox( array(
 				'id'          => $this->generate_metabox_id(),
 				'page_slugs'  => array( 'shop-einstellungen-payments', 'shop-einstellungen_page_shop-einstellungen-payments' ),
 				'title'       => sprintf( __( '%s Einstellungen', 'bonips_market' ), $this->admin_name ),

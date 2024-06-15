@@ -2,7 +2,7 @@
 if ( ! defined( 'BONIPS_MARKET_VERSION' ) ) exit;
 
 /**
- * PSeCommerce Gateway
+ * MarketPress Gateway
  * @since 1.0
  * @version 1.0
  */
@@ -33,7 +33,7 @@ if ( ! class_exists( 'MP_Gateway_boniPS' ) && class_exists( 'MP_Gateway_API' ) )
 			if ( isset( $settings['gateways']['bonips']['name'] ) && ! empty( $settings['gateways']['bonips']['name'] ) )
 				$this->public_name = $settings['gateways']['bonips']['name'];
 
-			$this->method_img_url        = plugins_url( 'assets/images/bonips-token-icon.png', BONIPS_PSECOMMERCE );
+			$this->method_img_url        = plugins_url( 'assets/images/bonips-token-icon.png', BONIPS_MARKETPRESS );
 			if ( isset( $settings['gateways']['bonips']['logo'] ) && ! empty( $settings['gateways']['bonips']['logo'] ) )
 				$this->method_img_url = $settings['gateways']['bonips']['logo'];
 
@@ -101,7 +101,7 @@ if ( ! class_exists( 'MP_Gateway_boniPS' ) && class_exists( 'MP_Gateway_API' ) )
 			else
 				$cost = $this->bonips->number( $total );
 
-			return apply_filters( 'bonips_psecommerce_order_cost', $cost, $total, $settings, $cart, $this );
+			return apply_filters( 'bonips_marketpress_order_cost', $cost, $total, $settings, $cart, $this );
 
 		}
 
@@ -262,7 +262,7 @@ if ( ! class_exists( 'MP_Gateway_boniPS' ) && class_exists( 'MP_Gateway_API' ) )
 
 			}
 
-			// Create PSeCommerce order
+			// Create MarketPress order
 			$order_id                             = $mp->generate_order_id();
 			$payment_info['gateway_public_name']  = $this->public_name;
 			$payment_info['gateway_private_name'] = $this->admin_name;
@@ -279,7 +279,7 @@ if ( ! class_exists( 'MP_Gateway_boniPS' ) && class_exists( 'MP_Gateway_API' ) )
 
 			// Deduct cost
 			$this->bonips->add_creds(
-				'psecommerce_payment',
+				'marketpress_payment',
 				$user_id,
 				0-$total,
 				$settings['gateways']['bonips']['log_template'],
@@ -305,7 +305,7 @@ if ( ! class_exists( 'MP_Gateway_boniPS' ) && class_exists( 'MP_Gateway_API' ) )
 						$cost       = $price*$quantity;
 
 						// Get profit share
-						$percentage = apply_filters( 'bonips_psecommerce_profit_share', $settings['gateways']['bonips']['profit_share_percent'], $order, $product, $this );
+						$percentage = apply_filters( 'bonips_marketpress_profit_share', $settings['gateways']['bonips']['profit_share_percent'], $order, $product, $this );
 						if ( $percentage == 0 ) continue;
 
 						// Calculate Share
@@ -313,7 +313,7 @@ if ( ! class_exists( 'MP_Gateway_boniPS' ) && class_exists( 'MP_Gateway_API' ) )
 
 						// Payout
 						$this->bonips->add_creds(
-							'psecommerce_sale',
+							'marketpress_sale',
 							$product->post_author,
 							$share,
 							$settings['gateways']['bonips']['profit_share_log'],
