@@ -3,7 +3,7 @@
  * Plugin Name: BoniPress für MarketPress
  * Plugin URI: https://cp-psource.github.io/bonipress-marketpress/
  * Description: Lasse Benutzer mit BoniPress-Punkten in Deinem MarketPress-Shop bezahlen.
- * Version: 1.3
+ * Version: 1.0
  * Tags: bonips, marketpress, gateway, payment
  * Author: PSOURCE
  * Author URI: https://github.com/cp-psource
@@ -47,7 +47,7 @@ if ( ! class_exists( 'boniPS_MarketPress_Plugin' ) ) :
 	final class boniPS_MarketPress_Plugin {
 
 		// Plugin Version
-		public $version             = '1.3';
+		public $version             = '1.0';
 
 		// Instnace
 		protected static $_instance = NULL;
