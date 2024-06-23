@@ -182,15 +182,22 @@ if ( ! class_exists( 'boniPS_MarketPress_Plugin' ) ) :
 		 */
 		public function load_gateway( $list ) {
 
-			if ( ! array_key_exists( BONIPS_SLUG, $list ) && version_compare( MP_VERSION, '1.5', '>=' ) ) {
-
-				$global = ( is_multisite() && bonips_centralize_log() ) ? true : false;
-				$list[ BONIPS_SLUG ] = array( 'MP_Gateway_boniPS_New', BONIPS_DEFAULT_LABEL, $global, false );
-
+			// Prüfen, ob die Funktion bonips_centralize_log existiert
+			if ( !function_exists('bonips_centralize_log') ) {
+			// Optional: Fehlermeldung loggen oder anzeigen
+			error_log('BoniPS plugin is not activated. The function bonips_centralize_log does not exist.');
+			return $list; // Beende die Funktion, wenn BoniPS nicht aktiv ist
 			}
-
+		
+			if ( ! array_key_exists( BONIPS_SLUG, $list ) && version_compare( MP_VERSION, '1.5', '>=' ) ) {
+		
+			$global = ( is_multisite() && bonips_centralize_log() ) ? true : false;
+			$list[ BONIPS_SLUG ] = array( 'MP_Gateway_boniPS_New', BONIPS_DEFAULT_LABEL, $global, false );
+		
+			}
+		
 			return $list;
-
+		
 		}
 
 		/**
@@ -199,6 +206,13 @@ if ( ! class_exists( 'boniPS_MarketPress_Plugin' ) ) :
 		 * @version 1.0
 		 */
 		public function adjust_currency_format( $formatted, $currency, $symbol, $amount ) {
+
+			// Prüfen, ob die Funktion bonips_point_type_exists existiert und die Konstante definiert ist
+			if ( !defined('BONIPS_DEFAULT_TYPE_KEY') ) {
+				// Optional: Fehlermeldung loggen oder anzeigen
+				error_log('BoniPS plugin is not activated or BONIPS_DEFAULT_TYPE_KEY is not defined.');
+				return $formatted; // Beende die Funktion, wenn die Konstante nicht definiert ist
+			}
 
 			if ( $currency == 'POINTS' || ( function_exists( 'bonips_point_type_exists' ) && bonips_point_type_exists( $currency ) ) ) {
 
